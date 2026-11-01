@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Phone Speaker - Low Latency Audio</title>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <header class="header">
+      <div class="logo-wrapper">
+        <div class="pulse-ring" id="pulseRing"></div>
+        <svg class="speaker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+      </div>
+      <h1>Phone as PC Speaker</h1>
+      <p class="subtitle">Real-time Bluetooth & Wi-Fi Audio Receiver</p>
+      <div class="status-badge disconnected" id="statusBadge">
+        <span class="status-dot"></span>
+        <span id="statusText">Tap Start to Listen</span>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <!-- Live Audio Visualizer -->
+      <div class="visualizer-card">
+        <canvas id="visualizerCanvas"></canvas>
+        <div class="stream-stats" id="streamStats">
+          <span>Format: 44.1kHz Stereo PCM</span>
+          <span id="latencyStat">Latency: ~25ms</span>
+        </div>
+      </div>
+
+      <!-- Main Action Button -->
+      <button class="btn-play" id="btnPlay">
+        <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+        <span id="playBtnText">START AUDIO</span>
+      </button>
+
+      <!-- Controls Card -->
+      <div class="card controls-card">
+        <div class="control-group">
+          <div class="control-header">
+            <label for="volumeSlider">Volume Boost</label>
+            <span class="value-display" id="volumeVal">100%</span>
+          </div>
+          <input type="range" id="volumeSlider" min="0" max="200" value="100" />
+        </div>
+
+        <div class="control-group">
+          <div class="control-header">
+            <label>Audio Stream Mode</label>
+            <span class="value-display" id="channelLabel">Bluetooth Clear (Mono)</span>
+          </div>
+          <div class="preset-selector" style="grid-template-columns: 1fr 1fr;">
+            <button class="preset-btn active" id="btnMono" data-channels="1">⚡ Clear (No Drops)</button>
+            <button class="preset-btn" id="btnStereo" data-channels="2">🎧 Stereo (Full)</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-header">
+            <label>Bluetooth Jitter Buffer</label>
+            <span class="value-display" id="presetLabel">Smooth (~100ms)</span>
+          </div>
+          <div class="preset-selector">
+            <button class="preset-btn" data-preset="low">Low Latency (~45ms)</button>
+            <button class="preset-btn active" data-preset="smooth">Smooth (~100ms)</button>
+            <button class="preset-btn" data-preset="stable">Rock Solid (~180ms)</button>
+          </div>
+        </div>
+
+        <div class="toggle-group">
+          <label class="switch-label">
+            <span>Keep Screen Awake</span>
+            <small>Prevents phone from sleeping</small>
+          </label>
+          <label class="switch">
+            <input type="checkbox" id="wakeLockToggle" checked />
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Quick Setup Guide Collapsible -->
+      <div class="card guide-card">
+        <details>
+          <summary><strong>📡 How to connect via Bluetooth</strong></summary>
+          <div class="guide-steps">
+            <ol>
+              <li>Pair your phone with your Windows PC in <strong>Bluetooth Settings</strong>.</li>
+              <li>On your phone, turn on <strong>Bluetooth Tethering</strong> (Settings &rarr; Hotspot/Tethering &rarr; Bluetooth Tethering).</li>
+              <li>On PC, right-click the Bluetooth icon in system tray &rarr; <em>Join a Personal Area Network</em> &rarr; Right click phone &rarr; <em>Connect using Access Point</em>.</li>
+              <li>Open this page on your phone browser and tap <strong>Start Audio</strong>!</li>
+              <li><em>(Or simply stay on the same Wi-Fi network for instant connection!)</em></li>
+            </ol>
+          </div>
+        </details>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <span>PC Loopback Streamer &bull; Active &bull; Low Latency</span>
+    </footer>
+  </div>
+
+  <!-- Hidden looping audio element to keep iOS / Android Web Audio alive in background -->
+  <audio id="keepAliveAudio" loop playsinline preload="auto" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA="></audio>
+
+  <script src="/player.js"></script>
+</body>
+</html>
