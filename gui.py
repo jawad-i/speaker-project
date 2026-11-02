@@ -70,12 +70,15 @@ class DesktopApp:
         scan_tip = ttk.Label(qr_card, text="Scan with Phone Camera or Open Link Below", style="Subtitle.TLabel")
         scan_tip.pack(pady=(0, 10))
 
-        # Network IP selector
+        # Network IP selector with Refresh button
         ip_frame = ttk.Frame(container)
         ip_frame.pack(fill=tk.X, pady=(0, 8))
 
-        ttk.Label(ip_frame, text="Network Adapter / IP:").pack(side=tk.LEFT)
-        self.ip_combo = ttk.Combobox(ip_frame, values=self.ips, state="readonly", width=18)
+        ttk.Label(ip_frame, text="Active IP:").pack(side=tk.LEFT)
+        self.refresh_btn = ttk.Button(ip_frame, text="🔄 Refresh", width=9, command=self.refresh_network_ips)
+        self.refresh_btn.pack(side=tk.RIGHT, padx=(4, 0))
+
+        self.ip_combo = ttk.Combobox(ip_frame, values=self.ips, state="readonly", width=16)
         self.ip_combo.set(self.current_ip)
         self.ip_combo.pack(side=tk.RIGHT, padx=4)
         self.ip_combo.bind("<<ComboboxSelected>>", self._on_ip_change)
@@ -112,6 +115,28 @@ class DesktopApp:
         # Bluetooth Guide Help Button
         help_btn = ttk.Button(container, text="📡 Bluetooth Pairing Guide", command=self._show_bt_guide)
         help_btn.pack(fill=tk.X, pady=(0, 6))
+
+    def refresh_network_ips(self):
+        """Poll network adapters and auto-switch if Bluetooth IP changed."""
+        try:
+            from config import get_network_ips, get_network_details
+            new_details = get_network_details()
+            new_ips = get_network_ips(prefer_bluetooth=True)
+            if new_ips != self.ips:
+                old_ip = self.current_ip
+                self.ips = new_ips
+                self.net_details = new_details
+                self.bt_ips = new_details.get("bluetooth", [])
+                self.ip_combo["values"] = self.ips
+                # Auto-select new bluetooth IP if changed
+                if self.bt_ips and (self.current_ip not in self.bt_ips or self.current_ip != self.bt_ips[0]):
+                    self.current_ip = self.bt_ips[0]
+                    self.ip_combo.set(self.current_ip)
+                    self.url_var.set(f"http://{self.current_ip}:{self.port}")
+                    self._update_qr()
+                    self.status_lbl.config(text=f"● Switched to New Bluetooth IP: {self.current_ip}")
+        except Exception:
+            pass
 
     def _update_qr(self):
         url = f"http://{self.current_ip}:{self.port}"
@@ -157,7 +182,15 @@ class DesktopApp:
         messagebox.showinfo("Bluetooth Setup Guide", guide)
 
     def _start_meters_loop(self):
+        self._network_poll_counter = 0
+
         def update():
+            # Periodic network adapter scan every 3 seconds (60 * 50ms)
+            self._network_poll_counter += 1
+            if self._network_poll_counter >= 60:
+                self._network_poll_counter = 0
+                self.refresh_network_ips()
+
             # Update VU meter
             rms = self.streamer.current_volume_rms
             # Scale non-linearly for natural visual audio response
