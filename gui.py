@@ -5,7 +5,6 @@ import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 import webbrowser
-import subprocess
 import qrcode
 from PIL import Image, ImageTk
 
@@ -161,7 +160,7 @@ class DesktopApp:
 
     def _open_bt_settings(self):
         try:
-            subprocess.Popen(["cmd", "/c", "start", "ms-settings:bluetooth"], shell=True)
+            os.startfile("ms-settings:bluetooth")
         except Exception:
             pass
 
