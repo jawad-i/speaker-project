@@ -20,6 +20,7 @@ class AudioStreamer:
         self.channels = channels
         self.block_size = block_size
         self.running = False
+        self.is_paused = False
         self.clients = set()
         self.lock = threading.Lock()
         self.current_volume_rms = 0.0
@@ -81,7 +82,11 @@ class AudioStreamer:
                         data = rec.record(numframes=self.block_size)
 
                         # RMS Volume calculation
-                        rms = float(np.sqrt(np.mean(data ** 2)))
+                        if self.is_paused:
+                            data = np.zeros_like(data)
+                            rms = 0.0
+                        else:
+                            rms = float(np.sqrt(np.mean(data ** 2)))
                         self.current_volume_rms = rms
 
                         with self.lock:

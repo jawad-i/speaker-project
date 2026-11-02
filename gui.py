@@ -1,9 +1,11 @@
 """Tkinter Desktop Control Panel for Phone As Speaker."""
 
 import io
+import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 import webbrowser
+import subprocess
 import qrcode
 from PIL import Image, ImageTk
 
@@ -17,11 +19,20 @@ class DesktopApp:
         self.net_details = net_details or {}
         self.bt_ips = self.net_details.get("bluetooth", [])
         self.current_ip = ips[0]
+        self.is_paused = False
 
-        self.root.title("Phone As PC Speaker - Bluetooth Mode")
-        self.root.geometry("460x670")
-        self.root.minsize(440, 620)
+        self.root.title("Phone as PC Speaker")
+        self.root.geometry("480x720")
+        self.root.minsize(460, 680)
         self.root.configure(bg="#0f172a")
+
+        # Set window icon
+        icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icon.ico")
+        if os.path.exists(icon_path):
+            try:
+                self.root.iconbitmap(icon_path)
+            except Exception:
+                pass
 
         self._apply_styles()
         self._build_ui()
@@ -100,7 +111,7 @@ class DesktopApp:
 
         # Audio VU Level Meter
         meter_card = tk.Frame(container, bg="#1e293b", bd=1, relief=tk.SOLID, padx=10, pady=8)
-        meter_card.pack(fill=tk.X, pady=(0, 12))
+        meter_card.pack(fill=tk.X, pady=(0, 10))
 
         meter_header = tk.Frame(meter_card, bg="#1e293b")
         meter_header.pack(fill=tk.X)
@@ -112,9 +123,55 @@ class DesktopApp:
         self.meter_canvas = tk.Canvas(meter_card, height=14, bg="#090d16", highlightthickness=0)
         self.meter_canvas.pack(fill=tk.X, pady=(6, 0))
 
+        # Audio Output Device Selector
+        dev_frame = ttk.Frame(container)
+        dev_frame.pack(fill=tk.X, pady=(0, 10))
+        ttk.Label(dev_frame, text="Audio Source:").pack(side=tk.LEFT)
+        self.speakers = self.streamer.get_devices()
+        spk_names = [s.name for s in self.speakers] or ["Default PC Audio"]
+        self.dev_combo = ttk.Combobox(dev_frame, values=spk_names, state="readonly", width=22)
+        cur_name = self.streamer.speaker.name if self.streamer.speaker else spk_names[0]
+        self.dev_combo.set(cur_name)
+        self.dev_combo.pack(side=tk.RIGHT, padx=4)
+        self.dev_combo.bind("<<ComboboxSelected>>", self._on_device_change)
+
+        # Quick Control Buttons (Pause Stream & Open Bluetooth Settings)
+        action_frame = ttk.Frame(container)
+        action_frame.pack(fill=tk.X, pady=(0, 10))
+
+        self.btn_pause = ttk.Button(action_frame, text="⏸️ Pause Audio", command=self._toggle_pause)
+        self.btn_pause.pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(0, 4))
+
+        btn_bt_settings = ttk.Button(action_frame, text="⚙️ Bluetooth Settings", command=self._open_bt_settings)
+        btn_bt_settings.pack(side=tk.RIGHT, expand=True, fill=tk.X, padx=(4, 0))
+
         # Bluetooth Guide Help Button
         help_btn = ttk.Button(container, text="📡 Bluetooth Pairing Guide", command=self._show_bt_guide)
         help_btn.pack(fill=tk.X, pady=(0, 6))
+
+    def _toggle_pause(self):
+        self.is_paused = not self.is_paused
+        self.streamer.is_paused = self.is_paused
+        if self.is_paused:
+            self.btn_pause.config(text="▶️ Resume Audio")
+            self.status_lbl.config(text="⏸️ Stream Paused", foreground="#f59e0b")
+        else:
+            self.btn_pause.config(text="⏸️ Pause Audio")
+            self.status_lbl.config(text="● Streaming Audio Live", foreground="#10b981")
+
+    def _open_bt_settings(self):
+        try:
+            subprocess.Popen(["cmd", "/c", "start", "ms-settings:bluetooth"], shell=True)
+        except Exception:
+            pass
+
+    def _on_device_change(self, event=None):
+        selected_name = self.dev_combo.get()
+        for spk in self.speakers:
+            if spk.name == selected_name:
+                self.streamer.speaker = spk
+                messagebox.showinfo("Device Switched", f"Audio input switched to:\n{spk.name}")
+                break
 
     def refresh_network_ips(self):
         """Poll network adapters and auto-switch if Bluetooth IP changed."""
