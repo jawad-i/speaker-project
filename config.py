@@ -1,4 +1,4 @@
-"""Configuration settings for Phone As Speaker server."""
+"""Configuration settings for BlueBridge (Phone as PC Speaker) server."""
 
 import socket
 import subprocess

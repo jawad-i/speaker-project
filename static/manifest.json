@@ -1,6 +1,6 @@
 {
-  "name": "Phone As PC Speaker",
-  "short_name": "PCSpeaker",
+  "name": "BlueBridge - Phone as PC Speaker",
+  "short_name": "BlueBridge",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0b0f19",

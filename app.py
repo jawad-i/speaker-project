@@ -1,4 +1,4 @@
-"""Phone As PC Speaker - Main Server Application.
+"""BlueBridge - Phone as PC Speaker Main Server Application.
 
 Captures PC audio in real-time and streams it with ultra-low latency to connected
 phones over Bluetooth (Bluetooth Tethering/PAN) or Wi-Fi.
@@ -135,7 +135,7 @@ def print_cli_banner(port, ips, net_details):
     primary_url = f"http://{ips[0]}:{port}"
 
     print("=" * 64)
-    print("      PHONE AS PC SPEAKER - BLUETOOTH AUDIO STREAMER")
+    print("           BLUEBRIDGE - PHONE AS PC SPEAKER")
     print("=" * 64)
     
     if bt_ips:
@@ -165,7 +165,7 @@ def print_cli_banner(port, ips, net_details):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Phone As PC Speaker Server")
+    parser = argparse.ArgumentParser(description="BlueBridge - Phone as PC Speaker Server")
     parser.add_argument("--port", type=int, default=DEFAULT_PORT, help="Port to listen on")
     parser.add_argument("--cli", action="store_true", help="Run in CLI mode without GUI window")
     args = parser.parse_args()
@@ -198,7 +198,7 @@ def main():
             import time
             time.sleep(1)
     except KeyboardInterrupt:
-        print("\n[*] Shutting down Phone As Speaker...")
+        print("\n[*] Shutting down BlueBridge...")
         streamer.stop()
 
 

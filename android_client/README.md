@@ -1,4 +1,4 @@
-# Native Android Audio Receiver (Optional Companion)
+# BlueBridge Android Audio Receiver (Optional Companion)
 
 If you prefer a native Android APK instead of opening the mobile Web Player in your phone browser, this directory provides the native implementation using Android's low-latency `AudioTrack` API.
 

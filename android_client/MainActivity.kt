@@ -1,4 +1,4 @@
-package com.example.phonespeaker
+package com.bluebridge.audio
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -14,7 +14,7 @@ import java.io.InputStream
 import java.util.UUID
 
 /**
- * Android Audio Receiver Client over Bluetooth RFCOMM / SPP.
+ * BlueBridge - Android Audio Receiver Client over Bluetooth RFCOMM / SPP.
  * Receives 16-bit PCM 44.1kHz stereo audio from Windows PC and plays via AudioTrack.
  */
 class MainActivity : AppCompatActivity() {

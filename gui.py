@@ -1,4 +1,4 @@
-"""Tkinter Desktop Control Panel for Phone As Speaker."""
+"""Tkinter Desktop Control Panel for BlueBridge (Phone as PC Speaker)."""
 
 import io
 import os
@@ -20,7 +20,7 @@ class DesktopApp:
         self.current_ip = ips[0]
         self.is_paused = False
 
-        self.root.title("Phone as PC Speaker")
+        self.root.title("BlueBridge - Phone as PC Speaker")
         self.root.geometry("480x720")
         self.root.minsize(460, 680)
         self.root.configure(bg="#0f172a")
@@ -55,10 +55,10 @@ class DesktopApp:
         container.pack(fill=tk.BOTH, expand=True)
 
         # Header
-        header = ttk.Label(container, text="🔊 Phone as PC Speaker", style="Header.TLabel")
+        header = ttk.Label(container, text="🔊 BlueBridge", style="Header.TLabel")
         header.pack(anchor="center", pady=(0, 2))
 
-        sub = ttk.Label(container, text="Pure Bluetooth Audio Receiver (No Wi-Fi Needed)", style="Subtitle.TLabel")
+        sub = ttk.Label(container, text="Phone as PC Speaker (Pure Bluetooth Audio)", style="Subtitle.TLabel")
         sub.pack(anchor="center", pady=(0, 10))
 
         # Status badge & Bluetooth indicator

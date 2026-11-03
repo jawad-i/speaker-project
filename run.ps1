@@ -1,4 +1,4 @@
-# PowerShell Runner for Phone As Speaker
+# PowerShell Runner for BlueBridge (Phone as PC Speaker)
 $VenvPython = Join-Path $PSScriptRoot ".venv\Scripts\python.exe"
 
 if (Test-Path $VenvPython) {

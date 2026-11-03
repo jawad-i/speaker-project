@@ -1,9 +1,9 @@
 @echo off
-title Phone As PC Speaker Launcher
+title BlueBridge Launcher
 cd /d "%~dp0"
 
 echo ====================================================
-echo        PHONE AS PC SPEAKER - AUDIO STREAMER
+echo           BLUEBRIDGE - PHONE AS PC SPEAKER
 echo ====================================================
 echo.
 

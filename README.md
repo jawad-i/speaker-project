@@ -1,6 +1,6 @@
-# 🔊 Phone as PC Speaker (Pure Bluetooth Audio Streamer)
+# 🔊 BlueBridge (Phone as PC Speaker)
 
-Turn your phone into a real-time, low-latency wireless speaker for your Windows PC **using only Bluetooth — zero Wi-Fi required!**
+Turn your phone into a real-time, low-latency wireless speaker for your Windows PC **using BlueBridge over Bluetooth or Wi-Fi (Pure Bluetooth supported — zero Wi-Fi required!)**
 
 Whatever audio plays on your PC (YouTube, movies, music, games) is captured live via Windows WASAPI loopback and streamed directly to your phone.
 
